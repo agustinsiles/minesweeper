@@ -6,7 +6,6 @@ import { DataStore } from '../stores/data.store';
 const _dataStore = DataStore.getInstance;
 
 interface CellConfig {
-    id: number,
     game: Game,
     xPosition: number,
     yPosition: number,
@@ -16,7 +15,6 @@ interface CellConfig {
 }
 
 export default class Cell {
-    private _id: number;
     game: Game;
     xPosition: number;
     yPosition: number;
@@ -25,21 +23,12 @@ export default class Cell {
     hasMine: boolean;
 
     constructor(cell: CellConfig) {
-        this._id = cell.id;
         this.game = cell.game;
         this.xPosition = cell.xPosition;
         this.yPosition = cell.yPosition;
-        this.revealed = cell.revealed;
+        this.revealed = cell.revealed || false;
         this.flagged = cell.flagged;
         this.hasMine = cell.hasMine;
-    }
-
-    set id(id: number) {
-        this._id = id;
-    }
-
-    get id(): number {
-        return this._id;
     }
 
     private _getAdjacentCells(): Array<Cell> {
@@ -84,7 +73,12 @@ export default class Cell {
             return adjacentMines;
         }
 
-        // const adjacentCells = this._getAdjacentCells();
-        // TODO: Reveal all empty adjacent cells
+        // this._revealAdjacentEmptyCells();
+    }
+
+    private _adjacentEmptyCells = (): Array<Cell> => _.filter(this._getAdjacentCells(), { hasMine: false });
+
+    private _revealAdjacentEmptyCells() {
+        const adjacentEmptyCells = this._adjacentEmptyCells();
     }
 }

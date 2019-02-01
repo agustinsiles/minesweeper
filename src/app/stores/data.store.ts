@@ -7,6 +7,7 @@ export class DataStore {
     static getInstance: DataStore = new DataStore();
     private _games: Array<Game> = [];
     private _cells: Array<Cell> = [];
+    private _activeGame: Game;
     
     get games(): Array<Game> {
         return _.cloneDeep(this._games);
@@ -14,6 +15,16 @@ export class DataStore {
 
     set games(games: Array<Game>) {
         this._games = games;        
+    }
+
+    createNewGame(game: Game): void {
+        this._games.push(game);
+        this.activeGame = game;
+    }
+
+    updateGameStatus(game: Game): void {
+        const g = _.find(this._games, { id: game.id });
+        _.assign(g, game);
     }
 
     get cells(): Array<Cell> {
@@ -24,7 +35,17 @@ export class DataStore {
         this._cells = cells;
     }
 
-    createCell(cell: Cell) {
+    createCell(cell: Cell): void {
         this._cells.push(cell);
+    }
+
+    getCellsByGame = (game: number): Array<Cell> => _.filter(this._cells, { game });
+
+    get activeGame(): Game {
+        return this._activeGame;
+    }
+
+    set activeGame(game: Game) {
+        this._activeGame = game;
     }
 }
