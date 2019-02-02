@@ -1,0 +1,13 @@
+<div class="minesweeper-table-container">
+    <div
+        *ngFor="let y of rowList" 
+        class="row">
+        <div 
+            *ngFor="let x of columnList"
+            (click)="onClicked($event)"
+            [attr.coordenates]="[x, y]"
+            id="{{ x + '-' + y }}"
+            class="cell">
+        </div>
+    </div>
+</div>

@@ -2,6 +2,6 @@ export default {
     STATUSES: {
         LOST: 'LOST',
         WON: 'WON',
-        PENDING: 'PENDING'
+        IN_PROGRESS: 'IN PROGRESS'
     }
 };

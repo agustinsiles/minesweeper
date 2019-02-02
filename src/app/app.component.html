@@ -1,1 +1,24 @@
 <h1>Minesweeper Test</h1>
+<div 
+    class="menu-container"
+    *ngIf="!gameStarted; else gameContainer">
+    <form>
+        <input 
+            type="number" 
+            [(ngModel)]="gameOptions.columns" 
+            name="columns">
+        <input 
+            type="number" 
+            [(ngModel)]="gameOptions.rows" 
+            name="rows">
+        <input 
+            type="number" 
+            [(ngModel)]="gameOptions.mines" 
+            name="mines">
+        <button (click)="startGame()">startGame</button>
+    </form>
+</div>
+
+<ng-template #gameContainer>
+    <minesweeper-table [game]="activeGame"></minesweeper-table>
+</ng-template>

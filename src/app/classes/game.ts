@@ -1,6 +1,5 @@
 interface GameConfig {
     id: number,
-    name: string,
     status: string,
     rows?: number,
     columns?: number,
@@ -10,7 +9,6 @@ interface GameConfig {
 
 export default class Game {
     private _id: number;
-    name: string;
     status: string;
     rows: number;
     columns: number;
@@ -19,7 +17,6 @@ export default class Game {
 
     constructor(game: GameConfig) {
         this._id = game.id;
-        this.name = game.name;
         this.status = game.status;
         this.rows = game.rows;
         this.columns = game.columns;

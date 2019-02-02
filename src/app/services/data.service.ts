@@ -8,7 +8,7 @@ import Cell from '../classes/cell';
 @Injectable({
 	providedIn: 'root'
 })
-export class ArticuloService {
+export class DataService {
 	private _dataStore = DataStore.getInstance;
 
 	constructor() {}
@@ -36,7 +36,7 @@ export class ArticuloService {
 		}
 
 		for (let y = 1; y <= game.rows; y++) {
-			for (let x = 1; y <= game.columns; y++) {
+			for (let x = 1; x <= game.columns; x++) {
 				const hasMine = _.some(mines, { xPosition: x, yPosition: y });
 				this._dataStore.createCell(new Cell({
 					game,
@@ -52,5 +52,10 @@ export class ArticuloService {
 
 	private _getRandomCoordenate(a, b) {
 		return Math.floor((Math.random() * (b - a) + 1));
+	}
+
+	getCellByCoordenate(coordenate: Array<number>): Cell {
+		const [ xPosition, yPosition ] = coordenate;
+		return _.find(this._dataStore.cells, { xPosition, yPosition });
 	}
 }

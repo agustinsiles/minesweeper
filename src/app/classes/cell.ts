@@ -59,12 +59,12 @@ export default class Cell {
 
     private _adjacentMines = (): Array<Cell> => _.filter(this._getAdjacentCells(), { hasMine: true });
 
-    revealStatus() {
+    revealStatus(): number {
         this.revealed = true;
 
         if (this.hasMine) {
             this.game.status = constants.STATUSES.LOST;
-            return 'MINE';
+            return -1;
         }
 
         const adjacentMines = this._adjacentMines().length;
@@ -73,12 +73,18 @@ export default class Cell {
             return adjacentMines;
         }
 
-        // this._revealAdjacentEmptyCells();
+        // this.revealAdjacentEmptyCells();
+        
+        return 0;
     }
 
     private _adjacentEmptyCells = (): Array<Cell> => _.filter(this._getAdjacentCells(), { hasMine: false });
 
-    private _revealAdjacentEmptyCells() {
+    revealAdjacentEmptyCells(): void {
         const adjacentEmptyCells = this._adjacentEmptyCells();
+        adjacentEmptyCells.forEach(cell => {
+            cell.revealed = true;
+            cell.revealAdjacentEmptyCells();
+        });
     }
 }
