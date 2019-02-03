@@ -6,6 +6,7 @@
             *ngFor="let x of columnList"
             (click)="revealCell($event)"
             [attr.coordenates]="[x, y]"
+            (contextmenu)="flagCell($event)"
             id="{{ x + '-' + y }}"
             class="cell">
         </div>

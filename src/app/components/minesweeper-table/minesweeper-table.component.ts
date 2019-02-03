@@ -24,28 +24,56 @@ export class MinesweeperTableComponent {
         this.rowList = Array(this.game.rows).fill(1).map((x,i) => i + 1);
     }
 
-    revealCell(evt): void { 
+    private _getCellFromEvent(evt): Cell {
         const coordenates = (evt.target.attributes['coordenates'].value).split(',');
         const [ xPosition, yPosition ] = coordenates;
-        const cell: Cell = this._dataService.getCellByCoordenate([+xPosition, +yPosition]);
+        return this._dataService.getCellByCoordenate([+xPosition, +yPosition]);
+    }
 
-        if (!cell) {
+    flagCell(evt): void {
+        evt.preventDefault();
+
+        const cell: Cell = this._getCellFromEvent(evt);
+
+        if (!cell || cell.revealed) {
             return;
         }
 
-        const status = cell.revealStatus();
+        const flaggedCell = document.getElementById(`${cell.xPosition}-${cell.yPosition}`);
+        flaggedCell.classList.toggle('flagged');
+
+        cell.flagged = !cell.flagged;
+
+        this._dataService.updateCell(cell);
+    }
+
+    revealCell(evt): void { 
+        const cell: Cell = this._getCellFromEvent(evt);
         
+        if (!cell || cell.flagged) {
+            return;
+        }
+
+        const status = this._dataService.revealCellStatus(cell);
+        const targetCell = document.getElementById(`${cell.xPosition}-${cell.yPosition}`);
+
         if (status > 0) {
             evt.currentTarget.innerHTML = status;
         } else if (status === 0) {
-            evt.currentTarget.attributes['class'].nodeValue += ' empty';
+            targetCell.classList.add('empty');
+
             const adjacentEmptyCells = cell.revealAdjacentEmptyCells();
-            adjacentEmptyCells.forEach(cell => {
-                const emptyCell = document.getElementById(`${cell.xPosition}-${cell.yPosition}`);
-                if (!cell.revealed) emptyCell.classList.add('empty');
+            adjacentEmptyCells.forEach(c => {
+                const emptyCell = document.getElementById(`${c.xPosition}-${c.yPosition}`);
+                
+                if (!c.revealed) {
+                    emptyCell.classList.add('empty');
+                    c.revealed = true;
+                    this._dataService.updateCell(c);
+                }
             });
         } else if (status === -1) {
-            evt.currentTarget.attributes['class'].nodeValue += ' mined';
+            targetCell.classList.add('mined');
             this._endGame();
         }
     }

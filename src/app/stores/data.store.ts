@@ -4,12 +4,10 @@ import Cell from "../classes/cell";
 
 export class DataStore {
     static getInstance: DataStore = new DataStore();
-    private _games: Array<Game> = JSON.parse(localStorage.getItem('games')) || [];
-    private _cells: Array<Cell> = JSON.parse(localStorage.getItem('cells')) || [];
-
-    private _saveGameOnStorage(): void {
-        localStorage.setItem('games', JSON.stringify(this._games));
-    }
+    
+    private _cells: Array<Cell> = [];
+    private _games: Array<Game> = [];
+    private _activeGame: Game;
     
     get games(): Array<Game> {
         return _.cloneDeep(this._games);
@@ -19,16 +17,18 @@ export class DataStore {
         this._games = games;        
     }
 
+    get activeGame(): Game {
+        return this._activeGame;
+    }
+
     createNewGame(game: Game): void {
         this._games.push(game);
-        this._saveGameOnStorage();
+        this._activeGame = game;
     }
 
     updateGameStatus(game: Game): void {
         const g = _.find(this._games, { id: game.id });
         _.assign(g, game);
-
-        this._saveGameOnStorage();
     }
 
     get cells(): Array<Cell> {
@@ -43,5 +43,8 @@ export class DataStore {
         this._cells.push(cell);
     }
 
-    getCellsByGame = (game: number): Array<Cell> => _.filter(this._cells, { game });
+    updateCell(cell: Cell): void {
+        const c: Cell = _.find(this._cells, c => c.xPosition === cell.xPosition && c.yPosition === cell.yPosition && c.game.id === cell.game.id);
+        _.assign(c, cell);
+    }
 }

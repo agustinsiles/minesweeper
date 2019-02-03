@@ -4,21 +4,28 @@ import { DataStore } from '../stores/data.store';
 
 import Game from '../classes/game';
 import Cell from '../classes/cell';
+import { Subject } from 'rxjs';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class DataService {
 	private _dataStore = DataStore.getInstance;
-
-	constructor() {}
+	gamesSubject = new Subject<Array<Game>>();
+	gameStatusSubject = new Subject<boolean>();
+	
+	getAllGames(): Array<Game> {
+		return this._dataStore.games;
+	}
 
 	createGame(game: Game) {
 		this._dataStore.createNewGame(game);
 		this._setCells(game);
+
+		this.gamesSubject.next(this._dataStore.games);
 	}
 
-	private _setCells(game: Game) {
+	private _getRandomMines(game: Game): Array<any> {
 		const mines = [];
 
 		for (let i = 1; i <= game.mines; i++) {
@@ -35,6 +42,16 @@ export class DataService {
 			mines.push({ xPosition, yPosition });
 		}
 
+		return mines;
+	}
+
+	private _getRandomCoordenate(a, b) {
+		return Math.floor((Math.random() * (b - a) + 1));
+	}
+
+	private _setCells(game: Game) {
+		const mines = this._getRandomMines(game);
+
 		for (let y = 1; y <= game.rows; y++) {
 			for (let x = 1; x <= game.columns; x++) {
 				const hasMine = _.some(mines, { xPosition: x, yPosition: y });
@@ -50,30 +67,58 @@ export class DataService {
 		}
 	}
 
-	private _getRandomCoordenate(a, b) {
-		return Math.floor((Math.random() * (b - a) + 1));
-	}
-
 	getCellByCoordenate(coordenate: Array<number>): Cell {
 		const [ xPosition, yPosition ] = coordenate;
-		return _.find(this._dataStore.cells, { xPosition, yPosition });
+		return _.find(this._dataStore.cells, c => c.xPosition === xPosition && c.yPosition === yPosition && c.game.id === this._dataStore.activeGame.id);
 	}
 
 	getAllMinedCells(): Array<Cell> {
-		return _.filter(this._dataStore.cells, { hasMine: true });
+		return _.filter(this._dataStore.cells, c => c.hasMine && c.game.id === this._dataStore.activeGame.id);
 	}
 
 	updateGame(game: Game): void {
 		this._dataStore.updateGameStatus(game);
+		this.gamesSubject.next(this._dataStore.games);
+	}
+
+	getCellsByGame(gameId: number) {
+		return _.filter(this._dataStore.cells, c => c.game.id === gameId);
+	}
+
+	checkGameStatus(game: Game) {
+		const gameCells: Array<Cell> = this.getCellsByGame(game.id);
+		const minedCells = _.filter(gameCells, { hasMine: true });
+		const unrevealedCells = _.filter(gameCells, { revealed: false });
+
+		if (minedCells.length === unrevealedCells.length) {
+			this.gameStatusSubject.next(true);
+		}
+	}
+
+	updateCell(cell: Cell): void {
+		this._dataStore.updateCell(cell);
+		this.checkGameStatus(cell.game);
+	}
+
+	revealCellStatus(cell: Cell): number {
+		const status = cell.revealStatus();
+
+		cell.revealed = true;
+
+		this.updateCell(cell);
+
+		return status;
 	}
 
 	getNextId(): number {
 		const games = this._dataStore.games;
+
         if (!games.length) {
             return 1;
         }
 
-        const lastGame = games[games.length - 1];
+		const lastGame = games[games.length - 1];
+		
         return lastGame.id + 1;
     }
 }

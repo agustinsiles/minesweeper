@@ -60,8 +60,6 @@ export default class Cell {
     private _adjacentMines = (): Array<Cell> => _.filter(this._getAdjacentCells(), { hasMine: true });
 
     revealStatus(): number {
-        this.revealed = true;
-
         if (this.hasMine) {
             this.game.status = constants.STATUSES.LOST;
             return -1;
@@ -76,15 +74,5 @@ export default class Cell {
         return 0;
     }
 
-    private _adjacentEmptyCells = (): Array<Cell> => _.filter(this._getAdjacentCells(), { hasMine: false, revealed: false });
-
-    revealAdjacentEmptyCells(): Array<Cell> {
-        const adjacentEmptyCells: Array<Cell> = this._adjacentEmptyCells();
-
-        adjacentEmptyCells.forEach(cell => {
-            cell.revealed = true;
-        });
-
-        return adjacentEmptyCells;
-    }
+    revealAdjacentEmptyCells = (): Array<Cell> => _.filter(this._getAdjacentCells(), { hasMine: false, revealed: false });
 }
