@@ -70,7 +70,7 @@ export class AppComponent implements OnInit {
 
         const rows = useDefaultValues ? 10 : this.f.rows.value;
         const columns = useDefaultValues ? 10 : this.f.columns.value;
-        const mines = useDefaultValues ? 50 : this.f.mines.value;
+        const mines = useDefaultValues ? 25 : this.f.mines.value;
 
         const maxMines = (rows * columns) / 2;
         if (!useDefaultValues && maxMines < mines) {

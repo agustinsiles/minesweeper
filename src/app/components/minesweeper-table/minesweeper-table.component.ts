@@ -91,7 +91,14 @@ export class MinesweeperTableComponent {
             
             emptyCell.classList.add('empty');
             c.revealed = true;
+
             this._dataService.updateCell(c);
+
+            // TODO: This works but performance must be improved.
+            const adjacentMinedCells = c.adjacentMines;
+            if (!adjacentMinedCells.length) {
+                this._getAllAdjacenEmptytMines(c);
+            }
         });
     }
 

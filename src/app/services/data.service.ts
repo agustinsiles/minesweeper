@@ -33,8 +33,8 @@ export class DataService {
 			let xPosition, yPosition;
 
 			do {
-				xPosition = this._getRandomCoordenate(1, game.columns + 1);
-				yPosition = this._getRandomCoordenate(1, game.rows + 1);
+				xPosition = this._getRandomCoordenate(1, game.columns);
+				yPosition = this._getRandomCoordenate(1, game.rows);
 		
 				isMineAdded = _.some(mines, { xPosition, yPosition });
 			} while (isMineAdded);
@@ -45,7 +45,7 @@ export class DataService {
 		return mines;
 	}
 
-	private _getRandomCoordenate = (a, b) => Math.round((Math.random() * (b - a)));
+	private _getRandomCoordenate = (a: number, b: number): number => Math.round((Math.random() * (b - a) + 1));
 
 	private _setCells(game: Game) {
 		const mines = this._getRandomMines(game);
@@ -63,6 +63,7 @@ export class DataService {
 				}));
 			}
 		}
+
 	}
 
 	getActiveGame(): Game {

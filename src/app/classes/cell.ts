@@ -57,7 +57,9 @@ export default class Cell {
         return adjacentCells;
     }
 
-    private _adjacentMines = (): Array<Cell> => _.filter(this._getAdjacentCells(), { hasMine: true });
+    get adjacentMines(): Array<Cell> {
+        return _.filter(this._getAdjacentCells(), { hasMine: true });
+    }
 
     revealStatus(): number {
         if (this.hasMine) {
@@ -65,7 +67,7 @@ export default class Cell {
             return -1;
         }
 
-        const adjacentMines = this._adjacentMines().length;
+        const adjacentMines = this.adjacentMines.length;
 
         if (adjacentMines) {
             return adjacentMines;
