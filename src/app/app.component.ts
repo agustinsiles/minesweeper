@@ -3,6 +3,7 @@ import { timer } from 'rxjs';
 import { DataService } from './services/data.service';
 import Game from './classes/game';
 import constants from './constants';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-root',
@@ -18,13 +19,20 @@ export class AppComponent implements OnInit {
     gameStatusObserver;
     gameStatusNotification: string;
     gameStarted: boolean = false;
+    gameSetupForm: FormGroup;
     gameOptions: any = {
         columns: 0,
         rows: 0,
         mines: 0
     };
+    submitted: boolean;
 
-    constructor(private _dataService: DataService) {}
+    constructor(
+        private formBuilder: FormBuilder,
+        private _dataService: DataService
+    ) {}
+
+    get f() { return this.gameSetupForm.controls; }
 
     ngOnInit(): void {
         this.archivedGames = this._dataService.getAllGames();
@@ -36,7 +44,14 @@ export class AppComponent implements OnInit {
             if (wonGame) {
                 this.endGame(true);
             }
-        })
+        });
+
+        this.gameSetupForm = this.formBuilder.group({
+            useDefaultValues: [''],
+            columns: ['', Validators.required],
+            rows: ['', Validators.required],
+            mines: ['', Validators.required]
+        });
     }
 
     ngOnDestroy() {
@@ -44,16 +59,40 @@ export class AppComponent implements OnInit {
         this.gameStatusObserver.unsubscribe();
     }
 
-    startGame(): void {
+    onSetupSubmit(): void {
+        this.submitted = true;
+
+        const useDefaultValues = this.f.useDefaultValues.value;
+
+        if (!useDefaultValues && this.gameSetupForm.invalid) {
+            return;
+        }
+
+        const rows = useDefaultValues ? 10 : this.f.rows.value;
+        const columns = useDefaultValues ? 10 : this.f.columns.value;
+        const mines = useDefaultValues ? 50 : this.f.mines.value;
+
+        const maxMines = (rows * columns) / 2;
+        if (!useDefaultValues && maxMines < mines) {
+            alert(`You have ${rows * columns} cells. You can't add more than ${maxMines}`);
+            return;
+        }
+
+        if (this.timerObservable) this.timerObservable.unsubscribe();
+
+        this._createNewGame(columns, rows, mines);
+    }
+
+    private _createNewGame(columns, rows, mines) {
         this.activeGame = null;
         this.gameStatusNotification = '';
         
         const newGame: Game = new Game({
             id: this._dataService.getNextId(),
             status: constants.STATUSES.IN_PROGRESS,
-            rows: this.gameOptions.rows || 10,
-            columns: this.gameOptions.rows || 10,
-            mines: this.gameOptions.mines || 50,
+            rows,
+            columns,
+            mines,
             user: 1,
             date: new Date()
         });
@@ -81,5 +120,18 @@ export class AppComponent implements OnInit {
         this.timer = 0;
         const source = timer(1000, 1000);
         this.timerObservable = source.subscribe(val => this.timer = val);
+    }
+
+    onCheckboxChange(): void {
+        const useDefaultValues = this.f.useDefaultValues.value;
+
+        const validators = !useDefaultValues ? [Validators.required] : undefined;
+        this.f.columns.setValidators(validators);
+        this.f.rows.setValidators(validators);
+        this.f.mines.setValidators(validators);
+
+        this.f.columns.updateValueAndValidity();
+        this.f.rows.updateValueAndValidity();
+        this.f.mines.updateValueAndValidity();
     }
 }

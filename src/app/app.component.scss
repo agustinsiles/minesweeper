@@ -1,0 +1,19 @@
+$danger: #de1738;
+
+.app-container {
+    margin: auto;
+    width: 1000px;
+
+    .game-setup-container {
+        input {
+            border-radius: 5px;
+            margin: 20px;
+        }
+
+        .is-invalid {
+            border: 1px solid $danger;
+        }
+    }
+
+    li { list-style: none; }
+}

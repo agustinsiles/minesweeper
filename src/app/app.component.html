@@ -1,45 +1,75 @@
-<h1>Minesweeper Test</h1>
-<div 
-    class="menu-container"
-    *ngIf="!activeGame; else gameContainer">
-    <form>
-        <input 
-            type="number" 
-            name="columns"
-            [(ngModel)]="gameOptions.columns">
-        <input 
-            type="number" 
-            name="rows"
-            [(ngModel)]="gameOptions.rows">
-        <input 
-            type="number"  
-            name="mines"
-            [(ngModel)]="gameOptions.mines">
-        <button (click)="startGame()">Start Game</button>
-    </form>
-
-    <div *ngIf="archivedGames && archivedGames.length">
-        <h3>My game history</h3>
+<div class="app-container">
+    <h1>Minesweeper Test</h1>
+    <div 
+        class="game-setup-container"
+        *ngIf="!activeGame; else gameContainer">
+        <form 
+            [formGroup]="gameSetupForm"
+            (ngSubmit)="onSetupSubmit()">
+            <label for="columns">
+                Qty. columns
+                <input 
+                    id="columns"
+                    type="number" 
+                    formControlName="columns"
+                    [ngClass]="{ 'is-invalid': submitted && f.columns.errors }">
+            </label>
+            <label for="rows">
+                Qty. rows
+                <input 
+                    id="rows"
+                    type="number" 
+                    formControlName="rows"
+                    [ngClass]="{ 'is-invalid': submitted && f.rows.errors }">
+            </label>
+            <label for="mines">
+                Qty. mines
+                <input 
+                    id="mines"
+                    type="number"  
+                    formControlName="mines"
+                    [ngClass]="{ 'is-invalid': submitted && f.mines.errors }">
+            </label>
+            <br>
+            <label for="useDefaultValues">
+                <input 
+                    id="useDefaultValues"
+                    type="checkbox"
+                    (change)="onCheckboxChange()"           
+                    formControlName="useDefaultValues"> Use default values
+            </label>
+            <br>
+            <button>Start Game</button>
+        </form>
     
-        <ul>
-            <li *ngFor="let game of archivedGames;">
-                {{ game.date | date }} - {{ game.status }}. Time spent: {{ game.timeSpent }} seconds.
-                <button 
-                    (click)="activeGame = game"
-                    *ngIf="game.status === 'IN_PROGRESS'">Resume
-                </button>
-            </li>
-        </ul>
+        <div *ngIf="archivedGames && archivedGames.length">
+            <h3>My game history</h3>
+        
+            <ul>
+                <li *ngFor="let game of archivedGames;">
+                    {{ game.date | date }} - {{ game.status }}. Time spent: {{ game.timeSpent }} seconds.
+                    <button 
+                        (click)="activeGame = game"
+                        *ngIf="game.status === 'IN_PROGRESS'">Resume
+                    </button>
+                </li>
+            </ul>
+        </div>
     </div>
+    
+    <ng-template #gameContainer>
+        <div class="app-game-container">
+            <div class="app-game-menu">
+                <h4>You've been playing for {{ timer }} seconds..</h4>
+                <button (click)="activeGame = null;">Start new game</button>
+            </div>
+            
+            <minesweeper-table 
+                [game]="activeGame"
+                (onGameEnd)="endGame()">
+            </minesweeper-table>
+        
+            <h4 *ngIf="gameStatusNotification">{{ gameStatusNotification }}</h4>
+        </div>
+    </ng-template>
 </div>
-
-<ng-template #gameContainer>
-    {{ timer }}
-    <button (click)="activeGame = null;">Start new game</button>
-    <minesweeper-table 
-        [game]="activeGame"
-        (onGameEnd)="endGame()">
-    </minesweeper-table>
-
-    <h4 *ngIf="gameStatusNotification">{{ gameStatusNotification }}</h4>
-</ng-template>

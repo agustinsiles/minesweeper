@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { DataService } from 'src/app/services/data.service';
 import Game from 'src/app/classes/game';
 import Cell from 'src/app/classes/cell';
-import { DataService } from 'src/app/services/data.service';
+import constants from 'src/app/constants';
 
 @Component({
     selector: 'minesweeper-table',
@@ -24,6 +25,8 @@ export class MinesweeperTableComponent {
         this.rowList = Array(this.game.rows).fill(1).map((x,i) => i + 1);
     }
 
+    private _gameInProgress = (): boolean => this.game.status === constants.STATUSES.IN_PROGRESS;
+
     private _getCellFromEvent(evt): Cell {
         const coordenates = (evt.target.attributes['coordenates'].value).split(',');
         const [ xPosition, yPosition ] = coordenates;
@@ -32,6 +35,11 @@ export class MinesweeperTableComponent {
 
     flagCell(evt): void {
         evt.preventDefault();
+
+        if (!this._gameInProgress()) {
+            alert('Game already ended. Please start a new one');
+            return;
+        }
 
         const cell: Cell = this._getCellFromEvent(evt);
 
@@ -48,6 +56,11 @@ export class MinesweeperTableComponent {
     }
 
     revealCell(evt): void { 
+        if (!this._gameInProgress()) {
+            alert('Game already ended. Please start a new one');
+            return;
+        }
+
         const cell: Cell = this._getCellFromEvent(evt);
         
         if (!cell || cell.flagged) {
