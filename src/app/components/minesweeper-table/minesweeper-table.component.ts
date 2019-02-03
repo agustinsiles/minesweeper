@@ -39,6 +39,11 @@ export class MinesweeperTableComponent {
             evt.currentTarget.innerHTML = status;
         } else if (status === 0) {
             evt.currentTarget.attributes['class'].nodeValue += ' empty';
+            const adjacentEmptyCells = cell.revealAdjacentEmptyCells();
+            adjacentEmptyCells.forEach(cell => {
+                const emptyCell = document.getElementById(`${cell.xPosition}-${cell.yPosition}`);
+                if (!cell.revealed) emptyCell.classList.add('empty');
+            });
         } else if (status === -1) {
             evt.currentTarget.attributes['class'].nodeValue += ' mined';
             this._endGame();

@@ -72,19 +72,19 @@ export default class Cell {
         if (adjacentMines) {
             return adjacentMines;
         }
-
-        // this.revealAdjacentEmptyCells();
         
         return 0;
     }
 
-    private _adjacentEmptyCells = (): Array<Cell> => _.filter(this._getAdjacentCells(), { hasMine: false });
+    private _adjacentEmptyCells = (): Array<Cell> => _.filter(this._getAdjacentCells(), { hasMine: false, revealed: false });
 
-    revealAdjacentEmptyCells(): void {
-        const adjacentEmptyCells = this._adjacentEmptyCells();
+    revealAdjacentEmptyCells(): Array<Cell> {
+        const adjacentEmptyCells: Array<Cell> = this._adjacentEmptyCells();
+
         adjacentEmptyCells.forEach(cell => {
             cell.revealed = true;
-            cell.revealAdjacentEmptyCells();
         });
+
+        return adjacentEmptyCells;
     }
 }
