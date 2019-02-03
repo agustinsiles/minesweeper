@@ -2,12 +2,14 @@ import * as _ from "lodash";
 import Game from "../classes/game";
 import Cell from "../classes/cell";
 
-
 export class DataStore {
     static getInstance: DataStore = new DataStore();
-    private _games: Array<Game> = [];
-    private _cells: Array<Cell> = [];
-    private _activeGame: Game;
+    private _games: Array<Game> = JSON.parse(localStorage.getItem('games')) || [];
+    private _cells: Array<Cell> = JSON.parse(localStorage.getItem('cells')) || [];
+
+    private _saveGameOnStorage(): void {
+        localStorage.setItem('games', JSON.stringify(this._games));
+    }
     
     get games(): Array<Game> {
         return _.cloneDeep(this._games);
@@ -19,12 +21,14 @@ export class DataStore {
 
     createNewGame(game: Game): void {
         this._games.push(game);
-        this.activeGame = game;
+        this._saveGameOnStorage();
     }
 
     updateGameStatus(game: Game): void {
         const g = _.find(this._games, { id: game.id });
         _.assign(g, game);
+
+        this._saveGameOnStorage();
     }
 
     get cells(): Array<Cell> {
@@ -40,12 +44,4 @@ export class DataStore {
     }
 
     getCellsByGame = (game: number): Array<Cell> => _.filter(this._cells, { game });
-
-    get activeGame(): Game {
-        return this._activeGame;
-    }
-
-    set activeGame(game: Game) {
-        this._activeGame = game;
-    }
 }

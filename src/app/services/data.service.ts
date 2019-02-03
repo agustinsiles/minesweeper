@@ -58,4 +58,22 @@ export class DataService {
 		const [ xPosition, yPosition ] = coordenate;
 		return _.find(this._dataStore.cells, { xPosition, yPosition });
 	}
+
+	getAllMinedCells(): Array<Cell> {
+		return _.filter(this._dataStore.cells, { hasMine: true });
+	}
+
+	updateGame(game: Game): void {
+		this._dataStore.updateGameStatus(game);
+	}
+
+	getNextId(): number {
+		const games = this._dataStore.games;
+        if (!games.length) {
+            return 1;
+        }
+
+        const lastGame = games[games.length - 1];
+        return lastGame.id + 1;
+    }
 }

@@ -4,7 +4,7 @@
         class="row">
         <div 
             *ngFor="let x of columnList"
-            (click)="onClicked($event)"
+            (click)="revealCell($event)"
             [attr.coordenates]="[x, y]"
             id="{{ x + '-' + y }}"
             class="cell">

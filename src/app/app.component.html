@@ -1,24 +1,43 @@
 <h1>Minesweeper Test</h1>
 <div 
     class="menu-container"
-    *ngIf="!gameStarted; else gameContainer">
+    *ngIf="!activeGame; else gameContainer">
     <form>
         <input 
             type="number" 
-            [(ngModel)]="gameOptions.columns" 
-            name="columns">
+            name="columns"
+            [(ngModel)]="gameOptions.columns">
         <input 
             type="number" 
-            [(ngModel)]="gameOptions.rows" 
-            name="rows">
+            name="rows"
+            [(ngModel)]="gameOptions.rows">
         <input 
-            type="number" 
-            [(ngModel)]="gameOptions.mines" 
-            name="mines">
-        <button (click)="startGame()">startGame</button>
+            type="number"  
+            name="mines"
+            [(ngModel)]="gameOptions.mines">
+        <button (click)="startGame()">Start Game</button>
     </form>
+
+    <div *ngIf="archivedGames && archivedGames.length">
+        <h3>My game history</h3>
+    
+        <ul>
+            <li *ngFor="let game of archivedGames;">
+                {{ game.date | date }} - {{ game.status }}. Time spent: {{ game.timeSpent }} seconds.
+                <button 
+                    (click)="activeGame = game"
+                    *ngIf="game.status === 'IN_PROGRESS'">Resume
+                </button>
+            </li>
+        </ul>
+    </div>
 </div>
 
 <ng-template #gameContainer>
-    <minesweeper-table [game]="activeGame"></minesweeper-table>
+    {{ timer }}
+    <button (click)="activeGame = null;">Start new game</button>
+    <minesweeper-table 
+        [game]="activeGame"
+        (onGameEnd)="endGame()">
+    </minesweeper-table>
 </ng-template>
