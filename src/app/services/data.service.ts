@@ -67,6 +67,10 @@ export class DataService {
 		}
 	}
 
+	getActiveGame(): Game {
+		return this._dataStore.activeGame;
+	}
+
 	getCellByCoordenate(coordenate: Array<number>): Cell {
 		const [ xPosition, yPosition ] = coordenate;
 		return _.find(this._dataStore.cells, c => c.xPosition === xPosition && c.yPosition === yPosition && c.game.id === this._dataStore.activeGame.id);
@@ -97,7 +101,6 @@ export class DataService {
 
 	updateCell(cell: Cell): void {
 		this._dataStore.updateCell(cell);
-		this.checkGameStatus(cell.game);
 	}
 
 	revealCellStatus(cell: Cell): number {

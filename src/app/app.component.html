@@ -40,4 +40,6 @@
         [game]="activeGame"
         (onGameEnd)="endGame()">
     </minesweeper-table>
+
+    <h4 *ngIf="gameStatusNotification">{{ gameStatusNotification }}</h4>
 </ng-template>

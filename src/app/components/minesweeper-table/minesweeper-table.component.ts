@@ -61,21 +61,25 @@ export class MinesweeperTableComponent {
             evt.currentTarget.innerHTML = status;
         } else if (status === 0) {
             targetCell.classList.add('empty');
-
-            const adjacentEmptyCells = cell.revealAdjacentEmptyCells();
-            adjacentEmptyCells.forEach(c => {
-                const emptyCell = document.getElementById(`${c.xPosition}-${c.yPosition}`);
-                
-                if (!c.revealed) {
-                    emptyCell.classList.add('empty');
-                    c.revealed = true;
-                    this._dataService.updateCell(c);
-                }
-            });
+            this._getAllAdjacenEmptytMines(cell);
         } else if (status === -1) {
             targetCell.classList.add('mined');
             this._endGame();
+            return;
         }
+
+        this._dataService.checkGameStatus(this._dataService.getActiveGame());
+    }
+
+    private _getAllAdjacenEmptytMines(cell: Cell) {
+        const adjacentEmptyCells = cell.revealAdjacentEmptyCells();
+        adjacentEmptyCells.forEach(c => {
+            const emptyCell = document.getElementById(`${c.xPosition}-${c.yPosition}`);
+            
+            emptyCell.classList.add('empty');
+            c.revealed = true;
+            this._dataService.updateCell(c);
+        });
     }
 
     private _endGame(): void {

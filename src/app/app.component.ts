@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
     timerObservable;
     gamesObserver;
     gameStatusObserver;
+    gameStatusNotification: string;
     gameStarted: boolean = false;
     gameOptions: any = {
         columns: 0,
@@ -45,7 +46,8 @@ export class AppComponent implements OnInit {
 
     startGame(): void {
         this.activeGame = null;
-
+        this.gameStatusNotification = '';
+        
         const newGame: Game = new Game({
             id: this._dataService.getNextId(),
             status: constants.STATUSES.IN_PROGRESS,
@@ -72,8 +74,7 @@ export class AppComponent implements OnInit {
         this.timerObservable.unsubscribe();
         this._dataService.updateGame(this.activeGame);
 
-        const msg = wonGame ? 'Yay! You won!' : 'Oops, you hit a mine! You lost this battle.';
-        alert(msg);
+        this.gameStatusNotification = wonGame ? 'Yay! You won!' : 'Oops, you hit a mine! You lost this battle.';
     }
 
     private _startTimer(): void {
