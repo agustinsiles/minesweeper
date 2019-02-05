@@ -98,6 +98,8 @@ export class MinesweeperTableComponent {
             const adjacentMinedCells = c.adjacentMines;
             if (!adjacentMinedCells.length) {
                 this._getAllAdjacenEmptytMines(c);
+            } else {
+                emptyCell.innerHTML = c.revealStatus().toString();
             }
         });
     }
