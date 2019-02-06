@@ -19,7 +19,8 @@
         &.mined { background-image: url('../../../assets/icons/mine.png'); }
         &.flagged { background-image: url('../../../assets/icons/flag.png'); }
         &.empty { background: #FFFFFF; }
+        &.numbered { background: #848484; }
     }
     
-    .row { display: flex }
+    .row { display: flex; }
 }
