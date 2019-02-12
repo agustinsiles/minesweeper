@@ -12,7 +12,6 @@ import constants from 'src/app/constants';
 })
 export class MinesweeperTableComponent {
     @Input() game: Game;
-    @Input() revealedCells: Array<Cell>;
     @Output() onGameEnd: EventEmitter<any> = new EventEmitter();
     
     columnList: Array<number>;
@@ -23,6 +22,32 @@ export class MinesweeperTableComponent {
     ngOnInit(): void {
         this.columnList = Array(this.game.columns).fill(1).map((x,i) => i + 1);
         this.rowList = Array(this.game.rows).fill(1).map((x,i) => i + 1);
+    }
+
+    ngAfterViewInit(): void {
+        const cellsOfExistingGame: Array<Cell> = this._dataService.getCellsByGame(this.game.id);
+
+        if (cellsOfExistingGame.length) {
+            const revealedCells: Array<Cell> = _.filter(cellsOfExistingGame, { revealed: true });
+    
+            revealedCells.forEach((cell: Cell) => {
+                const status = this._dataService.revealCellStatus(cell);
+                const targetCell = document.getElementById(`${cell.xPosition}-${cell.yPosition}`);
+
+                if (status > 0) {
+                    targetCell.innerHTML = status.toString();
+                    targetCell.classList.add('numbered');
+                } else if (status === 0) {
+                    targetCell.classList.add('empty');
+                }
+            });
+
+            const flaggedCells = _.filter(cellsOfExistingGame, { flagged: true });
+            flaggedCells.forEach(cell => {
+                const targetCell = document.getElementById(`${cell.xPosition}-${cell.yPosition}`);
+                targetCell.classList.add('flagged');
+            });
+        }
     }
 
     private _gameInProgress = (): boolean => this.game.status === constants.STATUSES.IN_PROGRESS;

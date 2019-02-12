@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { timer } from 'rxjs';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { DataService } from './services/data.service';
 import Game from './classes/game';
 import constants from './constants';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-root',
@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
         });
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.gamesObserver.unsubscribe();
         this.gameStatusObserver.unsubscribe();
     }
@@ -83,7 +83,7 @@ export class AppComponent implements OnInit {
         this._createNewGame(columns, rows, mines);
     }
 
-    private _createNewGame(columns, rows, mines) {
+    private _createNewGame(columns, rows, mines): void {
         this.activeGame = null;
         this.gameStatusNotification = '';
         
@@ -118,7 +118,7 @@ export class AppComponent implements OnInit {
 
     private _startTimer(): void {
         this.timer = 0;
-        const source = timer(1000, 1000);
+        const source = timer(0, 1000);
         this.timerObservable = source.subscribe(val => this.timer = val);
     }
 
@@ -133,5 +133,12 @@ export class AppComponent implements OnInit {
         this.f.columns.updateValueAndValidity();
         this.f.rows.updateValueAndValidity();
         this.f.mines.updateValueAndValidity();
+    }
+
+    startNewGame(): void {
+        this.activeGame.timeSpent = this.timer;
+        this._dataService.updateGame(this.activeGame);
+        this.timerObservable.unsubscribe();
+        this.activeGame = null;
     }
 }

@@ -50,7 +50,7 @@
                     {{ game.date | date }} - {{ game.status }}. Time spent: {{ game.timeSpent }} seconds.
                     <button 
                         (click)="activeGame = game"
-                        *ngIf="game.status === 'IN_PROGRESS'">Resume
+                        *ngIf="game.status === 'IN PROGRESS'">Resume
                     </button>
                 </li>
             </ul>
@@ -61,7 +61,7 @@
         <div class="app-game-container">
             <div class="app-game-menu">
                 <h4>You've been playing for {{ timer }} seconds..</h4>
-                <button (click)="activeGame = null;">Start new game</button>
+                <button (click)="startNewGame()">Start new game</button>
             </div>
             
             <minesweeper-table 

@@ -13,10 +13,6 @@ export class DataStore {
         return _.cloneDeep(this._games);
     }
 
-    set games(games: Array<Game>) {
-        this._games = games;        
-    }
-
     get activeGame(): Game {
         return this._activeGame;
     }
@@ -33,10 +29,6 @@ export class DataStore {
 
     get cells(): Array<Cell> {
         return _.cloneDeep(this._cells);
-    }
-
-    set cells(cells: Array<Cell>) {
-        this._cells = cells;
     }
 
     createCell(cell: Cell): void {
