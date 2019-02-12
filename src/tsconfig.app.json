@@ -1,12 +1,19 @@
 {
-  "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "../out-tsc/app",
-    "module": "es2015",
-    "types": []
-  },
-  "exclude": [
-    "src/test.ts",
-    "**/*.spec.ts"
-  ]
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": "./app/",
+        "outDir": "../out-tsc/app",
+        "module": "es2015",
+        "types": [],
+        "paths": {
+            "@app/*": ["./*"],
+            "@classes/*": ["classes/*"],
+            "@services/*": ["services/*"],
+            "@stores/*": ["stores/*"]
+        }
+    },
+    "exclude": [
+        "src/test.ts",
+        "**/*.spec.ts"
+    ]
 }

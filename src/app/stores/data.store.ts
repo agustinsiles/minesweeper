@@ -1,6 +1,6 @@
 import * as _ from "lodash";
-import Game from "../classes/game";
-import Cell from "../classes/cell";
+import Game from "@classes/game";
+import Cell from "@classes/cell";
 
 export class DataStore {
     static getInstance: DataStore = new DataStore();
@@ -17,6 +17,10 @@ export class DataStore {
         return this._activeGame;
     }
 
+    get cells(): Array<Cell> {
+        return _.cloneDeep(this._cells);
+    }
+
     createNewGame(game: Game): void {
         this._games.push(game);
         this._activeGame = game;
@@ -27,16 +31,12 @@ export class DataStore {
         _.assign(g, game);
     }
 
-    get cells(): Array<Cell> {
-        return _.cloneDeep(this._cells);
-    }
-
     createCell(cell: Cell): void {
         this._cells.push(cell);
     }
 
     updateCell(cell: Cell): void {
-        const c: Cell = _.find(this._cells, c => c.xPosition === cell.xPosition && c.yPosition === cell.yPosition && c.game.id === cell.game.id);
+        const c: Cell = _.find(this._cells, (c: Cell) => c.xPosition === cell.xPosition && c.yPosition === cell.yPosition && c.game.id === cell.game.id);
         _.assign(c, cell);
     }
 }

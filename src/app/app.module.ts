@@ -2,8 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { AppComponent } from './app.component';
-import { MinesweeperTableComponent } from './components/minesweeper-table/minesweeper-table.component';
+import { AppComponent } from '@app/app.component';
+import { MinesweeperTableComponent } from '@app/components/minesweeper-table/minesweeper-table.component';
 
 @NgModule({
     declarations: [

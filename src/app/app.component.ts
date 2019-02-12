@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { timer } from 'rxjs';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { DataService } from './services/data.service';
-import Game from './classes/game';
-import constants from './constants';
+import { DataService } from '@services/data.service';
+import Game from '@classes/game';
+import constants from '@app/constants';
 
 @Component({
     selector: 'app-root',
@@ -52,6 +52,8 @@ export class AppComponent implements OnInit {
             rows: ['', Validators.required],
             mines: ['', Validators.required]
         });
+
+        this.setGameConfig();
     }
 
     ngOnDestroy(): void {
@@ -113,22 +115,27 @@ export class AppComponent implements OnInit {
         this.timerObservable.unsubscribe();
         this._dataService.updateGame(this.activeGame);
 
-        this.gameStatusNotification = wonGame ? 'Yay! You won!' : 'Oops, you hit a mine! You lost this battle.';
+        this.gameStatusNotification = constants.MESSAGES[this.activeGame.status];
     }
 
     private _startTimer(): void {
-        this.timer = 0;
         const source = timer(0, 1000);
+        this.timer = 0;
         this.timerObservable = source.subscribe(val => this.timer = val);
     }
 
-    onCheckboxChange(): void {
-        const useDefaultValues = this.f.useDefaultValues.value;
+    setGameConfig(): void {
+        const gridValidators: Array<any> = [];
+        const minesValidators: Array<any> = [];
 
-        const validators = !useDefaultValues ? [Validators.required] : undefined;
-        this.f.columns.setValidators(validators);
-        this.f.rows.setValidators(validators);
-        this.f.mines.setValidators(validators);
+        if (!this.f.useDefaultValues.value) {
+            gridValidators.push(...[Validators.required, Validators.min(5), Validators.max(20)]);
+            minesValidators.push(...[Validators.required, Validators.min(1)]);
+        }
+        
+        this.f.columns.setValidators(gridValidators);
+        this.f.rows.setValidators(gridValidators);
+        this.f.mines.setValidators(minesValidators);
 
         this.f.columns.updateValueAndValidity();
         this.f.rows.updateValueAndValidity();

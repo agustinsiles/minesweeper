@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
-import Game from "./game";
-import constants from "./../constants";
-import { DataStore } from '../stores/data.store';
+import { DataStore } from '@stores/data.store';
+import Game from "@classes/game";
+import constants from "@app/constants";
 
 const _dataStore = DataStore.getInstance;
 

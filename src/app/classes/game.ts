@@ -1,5 +1,3 @@
-import constants from '../constants';
-
 interface GameConfig {
     id: number,
     status: string,

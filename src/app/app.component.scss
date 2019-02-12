@@ -5,15 +5,29 @@ $danger: #de1738;
     width: 1000px;
 
     .game-setup-container {
-        input {
-            border-radius: 5px;
-            margin: 20px;
+        .game-setup-item {
+            float: left;
+            margin: 10px;
+            width: 30%;
+
+            label { 
+                width: 100%; 
+                .form-error { color: $danger; }
+            }
+
+            input { 
+                margin: 20px 0;
+                width: 100%; 
+                
+                &.is-invalid { border: 1px solid $danger; }
+            }
         }
 
-        .is-invalid {
-            border: 1px solid $danger;
+        .game-setup-start-game { 
+            display: block;
+            margin: 20px auto; 
         }
     }
 
-    li { list-style: none; }
+    li { list-style: none; }    
 }

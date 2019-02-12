@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { DataService } from 'src/app/services/data.service';
-import Game from 'src/app/classes/game';
-import Cell from 'src/app/classes/cell';
-import constants from 'src/app/constants';
+import { DataService } from '@services/data.service';
+import Game from '@classes/game';
+import Cell from '@classes/cell';
+import constants from '@app/constants';
 
 @Component({
     selector: 'minesweeper-table',
@@ -27,42 +27,44 @@ export class MinesweeperTableComponent {
     ngAfterViewInit(): void {
         const cellsOfExistingGame: Array<Cell> = this._dataService.getCellsByGame(this.game.id);
 
-        if (cellsOfExistingGame.length) {
-            const revealedCells: Array<Cell> = _.filter(cellsOfExistingGame, { revealed: true });
-    
-            revealedCells.forEach((cell: Cell) => {
-                const status = this._dataService.revealCellStatus(cell);
-                const targetCell = document.getElementById(`${cell.xPosition}-${cell.yPosition}`);
-
-                if (status > 0) {
-                    targetCell.innerHTML = status.toString();
-                    targetCell.classList.add('numbered');
-                } else if (status === 0) {
-                    targetCell.classList.add('empty');
-                }
-            });
-
-            const flaggedCells = _.filter(cellsOfExistingGame, { flagged: true });
-            flaggedCells.forEach(cell => {
-                const targetCell = document.getElementById(`${cell.xPosition}-${cell.yPosition}`);
-                targetCell.classList.add('flagged');
-            });
+        if (!cellsOfExistingGame.length) {
+            return;
         }
+        
+        const revealedCells: Array<Cell> = _.filter(cellsOfExistingGame, { revealed: true });
+
+        revealedCells.forEach((cell: Cell) => {
+            const status = this._dataService.revealCellStatus(cell);
+            const targetCell = document.getElementById(`${cell.xPosition}-${cell.yPosition}`);
+
+            if (status > 0) {
+                targetCell.innerHTML = status.toString();
+                targetCell.classList.add('numbered');
+            } else if (status === 0) {
+                targetCell.classList.add('empty');
+            }
+        });
+
+        const flaggedCells = _.filter(cellsOfExistingGame, { flagged: true });
+        flaggedCells.forEach((cell: Cell) => {
+            const targetCell = document.getElementById(`${cell.xPosition}-${cell.yPosition}`);
+            targetCell.classList.add('flagged');
+        });
     }
 
     private _gameInProgress = (): boolean => this.game.status === constants.STATUSES.IN_PROGRESS;
 
-    private _getCellFromEvent(evt): Cell {
+    private _getCellFromEvent(evt: any): Cell {
         const coordenates = (evt.target.attributes['coordenates'].value).split(',');
         const [ xPosition, yPosition ] = coordenates;
         return this._dataService.getCellByCoordenate([+xPosition, +yPosition]);
     }
 
-    flagCell(evt): void {
+    flagCell(evt: any): void {
         evt.preventDefault();
 
         if (!this._gameInProgress()) {
-            alert('Game already ended. Please start a new one');
+            alert(constants.MESSAGES.GAME_ENDED);
             return;
         }
 
@@ -82,7 +84,7 @@ export class MinesweeperTableComponent {
 
     revealCell(evt): void { 
         if (!this._gameInProgress()) {
-            alert('Game already ended. Please start a new one');
+            alert(constants.MESSAGES.GAME_ENDED);
             return;
         }
 

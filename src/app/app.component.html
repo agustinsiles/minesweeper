@@ -6,45 +6,72 @@
         <form 
             [formGroup]="gameSetupForm"
             (ngSubmit)="onSetupSubmit()">
-            <label for="columns">
-                Qty. columns
-                <input 
-                    id="columns"
-                    type="number" 
-                    formControlName="columns"
-                    [ngClass]="{ 'is-invalid': submitted && f.columns.errors }">
-            </label>
-            <label for="rows">
-                Qty. rows
-                <input 
-                    id="rows"
-                    type="number" 
-                    formControlName="rows"
-                    [ngClass]="{ 'is-invalid': submitted && f.rows.errors }">
-            </label>
-            <label for="mines">
-                Qty. mines
-                <input 
-                    id="mines"
-                    type="number"  
-                    formControlName="mines"
-                    [ngClass]="{ 'is-invalid': submitted && f.mines.errors }">
-            </label>
-            <br>
+            <div class="game-setup-item">
+                <label for="columns">
+                    Qty. columns
+                    <input 
+                        id="columns"
+                        type="number" 
+                        formControlName="columns"
+                        [ngClass]="{ 'is-invalid': submitted && f.columns.errors }">
+                    <span 
+                        class="form-error"
+                        *ngIf="f.columns.errors && submitted">
+                        <span *ngIf="f.columns.errors.required">Columns are required!</span>
+                        <span *ngIf="f.columns.errors.min">You must set at least 5 columns!</span>
+                        <span *ngIf="f.columns.errors.max">You must set up to 20 columns!</span>
+                    </span>
+                </label>
+            </div>
+            <div class="game-setup-item">
+                <label for="rows">
+                    Qty. rows
+                    <input 
+                        id="rows"
+                        type="number" 
+                        formControlName="rows"
+                        [ngClass]="{ 'is-invalid': submitted && f.rows.errors }">
+                    <span 
+                        class="form-error"
+                        *ngIf="f.rows.errors && submitted">
+                        <span *ngIf="f.rows.errors.required">Rows are required!</span>
+                        <span *ngIf="f.rows.errors.min">You must set at least 5 rows!</span>
+                        <span *ngIf="f.rows.errors.max">You must set up to 20 rows!</span>
+                    </span>
+                </label>
+            </div>
+            <div class="game-setup-item">
+                <label for="mines">
+                    Qty. mines
+                    <input 
+                        id="mines"
+                        type="number"  
+                        formControlName="mines"
+                        [ngClass]="{ 'is-invalid': submitted && f.mines.errors }">
+                    <span 
+                        class="form-error"
+                        *ngIf="f.mines.errors && submitted">
+                        <span *ngIf="f.mines.errors.required">Mines are required!</span>
+                        <span *ngIf="f.mines.errors.min">You must set at least 1 mine!</span>
+                    </span>
+                </label>
+            </div>
+
+            <div style="clear: both;"></div>
+            
             <label for="useDefaultValues">
                 <input 
                     id="useDefaultValues"
                     type="checkbox"
-                    (change)="onCheckboxChange()"           
+                    (change)="setGameConfig()"           
                     formControlName="useDefaultValues"> Use default values
             </label>
-            <br>
-            <button>Start Game</button>
+            
+            <button class="game-setup-start-game">Start Game</button>
         </form>
     
         <div *ngIf="archivedGames && archivedGames.length">
             <h3>My game history</h3>
-        
             <ul>
                 <li *ngFor="let game of archivedGames;">
                     {{ game.date | date }} - {{ game.status }}. Time spent: {{ game.timeSpent }} seconds.
@@ -61,7 +88,7 @@
         <div class="app-game-container">
             <div class="app-game-menu">
                 <h4>You've been playing for {{ timer }} seconds..</h4>
-                <button (click)="startNewGame()">Start new game</button>
+                <button (click)="startNewGame()">Set up a new game</button>
             </div>
             
             <minesweeper-table 
