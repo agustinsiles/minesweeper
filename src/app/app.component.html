@@ -76,7 +76,7 @@
                 <li *ngFor="let game of archivedGames;">
                     {{ game.date | date }} - {{ game.status }}. Time spent: {{ game.timeSpent }} seconds.
                     <button 
-                        (click)="activeGame = game"
+                        (click)="resumeGame(game)"
                         *ngIf="game.status === 'IN PROGRESS'">Resume
                     </button>
                 </li>

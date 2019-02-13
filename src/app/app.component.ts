@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
     activeGame: Game;    
     archivedGames: Array<Game>;
     timer: number;
-    timerObservable;
+    interval;
     gamesObserver;
     gameStatusObserver;
     gameStatusNotification: string;
@@ -80,7 +80,7 @@ export class AppComponent implements OnInit {
             return;
         }
 
-        if (this.timerObservable) this.timerObservable.unsubscribe();
+        if (this.timer) this._pauseTimer();
 
         this._createNewGame(columns, rows, mines);
     }
@@ -112,16 +112,17 @@ export class AppComponent implements OnInit {
         this.activeGame.status = constants.STATUSES[wonGame ? 'WON' : 'LOST'];
         this.activeGame.timeSpent = this.timer;
 
-        this.timerObservable.unsubscribe();
+        this._pauseTimer();
         this._dataService.updateGame(this.activeGame);
 
         this.gameStatusNotification = constants.MESSAGES[this.activeGame.status];
     }
 
     private _startTimer(): void {
-        const source = timer(0, 1000);
-        this.timer = 0;
-        this.timerObservable = source.subscribe(val => this.timer = val);
+        this.timer = this.activeGame && this.activeGame.timeSpent || 1;
+        this.interval = setInterval(() => {
+            this.timer++;
+        },1000);
     }
 
     setGameConfig(): void {
@@ -145,7 +146,16 @@ export class AppComponent implements OnInit {
     startNewGame(): void {
         this.activeGame.timeSpent = this.timer;
         this._dataService.updateGame(this.activeGame);
-        this.timerObservable.unsubscribe();
+        this._pauseTimer();
         this.activeGame = null;
+    }
+
+    resumeGame(game: Game): void {
+        this.activeGame = game;
+        this._startTimer();
+    }
+
+    private _pauseTimer(): void {
+        clearInterval(this.interval);
     }
 }
