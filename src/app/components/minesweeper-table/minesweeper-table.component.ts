@@ -112,22 +112,22 @@ export class MinesweeperTableComponent {
         this._dataService.checkGameStatus(this._dataService.getActiveGame());
     }
 
-    private _getAllAdjacenEmptytMines(cell: Cell): void {
-        const adjacentEmptyCells = cell.revealAdjacentEmptyCells();
-        adjacentEmptyCells.forEach(c => {
-            const emptyCell = document.getElementById(`${c.xPosition}-${c.yPosition}`);
+    private _getAllAdjacenEmptytMines(targetCell: Cell): void {
+        const adjacentEmptyCells = targetCell.revealAdjacentEmptyCells();
+        adjacentEmptyCells.forEach((cell: Cell) => {
+            const { xPosition, yPosition } = cell;
+            const emptyCell = document.getElementById(`${xPosition}-${yPosition}`);
 
-            c.revealed = true;
+            cell.revealed = true;
 
-            this._dataService.updateCell(c);
+            this._dataService.updateCell(cell);
 
-            const adjacentMinedCells = c.adjacentMines;
+            const adjacentMinedCells = cell.adjacentMines;
             if (adjacentMinedCells.length) {
-                emptyCell.innerHTML = c.revealStatus().toString();
+                emptyCell.innerHTML = cell.revealStatus().toString();
                 emptyCell.classList.add('numbered');
             } else {
                 emptyCell.classList.add('empty');
-                // TODO: This works but way too slow and performance must be improved.
                 // this._getAllAdjacenEmptytMines(c);
             }
         });

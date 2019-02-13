@@ -147,6 +147,7 @@ export class AppComponent implements OnInit {
         this.activeGame.timeSpent = this.timer;
         this._dataService.updateGame(this.activeGame);
         this._pauseTimer();
+        this.gameStatusNotification = '';
         this.activeGame = null;
     }
 
